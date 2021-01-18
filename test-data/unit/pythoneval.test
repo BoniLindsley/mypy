@@ -1065,6 +1065,31 @@ _program.py:14: note: Revealed type is "def (*x: builtins.str) -> contextlib._Ge
 _program.py:16: error: Argument 1 to "f" has incompatible type "str"; expected "int"
 _program.py:17: note: Revealed type is "builtins.str*"
 
+[case testAsyncContextManager]
+# flags: --python-version 3.7
+import contextlib
+from contextlib import asynccontextmanager
+from typing import AsyncIterator
+
+@asynccontextmanager
+async def f(x: int) -> AsyncIterator[str]:
+    yield 'foo'
+
+@contextlib.asynccontextmanager
+async def g(*x: str) -> AsyncIterator[int]:
+    yield 1
+
+reveal_type(f)
+reveal_type(g)
+
+with f('') as s:
+    reveal_type(s)
+[out]
+_program.py:13: note: Revealed type is 'def (x: builtins.int) -> typing.AsyncContextManager[builtins.str*]'
+_program.py:14: note: Revealed type is 'def (*x: builtins.str) -> typing.AsyncContextManager[builtins.int*]'
+_program.py:16: error: Argument 1 to "f" has incompatible type "str"; expected "int"
+_program.py:17: note: Revealed type is 'builtins.str*'
+
 [case testTypedDictGet]
 # Test that TypedDict get plugin works with typeshed stubs
 # TODO: Make it possible to use strict optional here
