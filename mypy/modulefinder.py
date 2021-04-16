@@ -494,6 +494,7 @@ def matches_exclude(subpath: str, exclude: str, fscache: FileSystemCache, verbos
 def verify_module(fscache: FileSystemCache, id: str, path: str, prefix: str) -> bool:
     """Check that all packages containing id have a __init__ file."""
     if path.endswith(('__init__.py', '__init__.pyi')):
+        #if os.path.basename(path) in ('__init__.py', '__init__.pyi'):
         path = os.path.dirname(path)
     for i in range(id.count('.')):
         path = os.path.dirname(path)

@@ -19,6 +19,7 @@ class ModuleFinderSuite(Suite):
         self.search_paths = SearchPaths(
             python_path=(),
             mypy_path=(
+                os.path.join(data_path, "endswith_init_pkg"),
                 os.path.join(data_path, "nsx-pkg1"),
                 os.path.join(data_path, "nsx-pkg2"),
                 os.path.join(data_path, "nsx-pkg3"),
@@ -140,6 +141,16 @@ class ModuleFinderSuite(Suite):
         found_module = self.fmc_ns.find_module("d")
         assert_equal(ModuleNotFoundReason.NOT_FOUND, found_module)
 
+    def test__find_prefix_init_in_endswith_init(self) -> None:
+        found_module = self.fmc_ns.find_module(
+            "endswith_init.prefix__init__"
+        )
+        expected = os.path.join(
+            data_path, "endswith_init_pkg", "endswith_init",
+            "prefix__init__.py"
+        )
+        assert_equal(expected, found_module)
+
 
 class ModuleFinderSitePackagesSuite(Suite):
 
@@ -216,6 +227,8 @@ class ModuleFinderSitePackagesSuite(Suite):
 
             # A regular, non-site-packages module
             ("a", os.path.join(data_path, "pkg1", "a.py")),
+
+            ("endswith_init.prefix__init__", self.path("endswith_init", "prefix__init__.py")),
         ]
         for module, expected in cases:
             template = "Find(" + module + ") got {}; expected {}"
